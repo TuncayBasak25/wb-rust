@@ -1,6 +1,24 @@
-use crate::Vec2;
+use super::{angle::{Angle, Rad}, V2};
 
-impl Vec2 {
+impl V2 {
+    pub fn add(&mut self, rhs: V2) -> &mut Self {
+        self.0 += rhs.x();
+        self.1 += rhs.y();
+        self
+    }
+
+    pub fn sub(&mut self, rhs: V2) -> &mut Self {
+        self.0 -= rhs.x();
+        self.1 -= rhs.y();
+        self
+    }
+
+    pub fn scale(&mut self, value: f32) -> &mut Self {
+        self.0 *= value;
+        self.1 *= value;
+        self
+    }
+
     pub fn normalize(&mut self) -> &mut Self {
         let mag = self.mag();
         if mag != 0.0 {
@@ -9,36 +27,24 @@ impl Vec2 {
         self
     }
 
-    pub fn add(&mut self, rhs: Vec2) -> &mut Self {
-        self.x += rhs.x;
-        self.y += rhs.y;
+    pub fn set_direction<U: Into<Rad>>(&mut self, angle: U) -> &mut Self {
+        if !self.is_null() {
+            let mag = self.mag();
+            let mut angle: Rad = angle.into();
+            self.0 = angle.cos() * mag;
+            self.1 = angle.sin() * mag;
+        }
         self
     }
 
-    pub fn sub(&mut self, rhs: Vec2) -> &mut Self {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
+    pub fn rotate(&mut self, rad: f32) -> &mut Self {
+        if !self.is_null() {
+            self.set_direction(rad + self.dir().unwrap());
+        }
         self
     }
 
-    pub fn scale(&mut self, value: f64) -> &mut Self {
-        self.x *= value;
-        self.y *= value;
-        self
-    }
-
-    pub fn set_direction(&mut self, rad: f64) -> &mut Self {
-        self.x = rad.cos() * self.mag();
-        self.y = rad.sin() * self.mag();
-        self
-    }
-
-    pub fn rotate(&mut self, rad: f64) -> &mut Self {
-        self.set_direction(rad + self.dir());
-        self
-    }
-
-    pub fn rotate_over(&mut self, origin: Vec2, rad: f64) -> &mut Self {
+    pub fn rotate_over(&mut self, origin: V2, rad: f64) -> &mut Self {
         self.sub(origin);
         self.rotate(rad);
         self.add(origin);
