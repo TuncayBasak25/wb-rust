@@ -1,9 +1,8 @@
 
 
-mod vector;
+mod core;
 mod window;
 
-pub use vector::Vec2;
 pub use window::Window;
 
 
