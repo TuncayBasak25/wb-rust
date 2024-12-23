@@ -9,7 +9,8 @@ pub use windows_sys::Win32::UI::Input::KeyboardAndMouse;
 use image::{DynamicImage, GenericImageView, RgbaImage};
 use win_screenshot::prelude::*;
 
-use crate::Vec2;
+use crate::vector::V2;
+
 
 pub struct Window(HWND, isize);
 
@@ -63,15 +64,15 @@ impl Window {
         self.post_message(WM_LBUTTONUP, 0, 0)
     }
 
-    pub fn mouse_move(&self, coords: Vec2) {
-        let lp: isize = coords.x as isize;
+    pub fn mouse_move(&self, coords: V2<u16>) {
+        let lp = coords.y as isize;
         let lp = lp << 16;
-        let lp = lp + coords.y as isize;
+        let lp = lp + coords.x as isize;
 
         self.post_message(512, 0, lp)
     }
 
-    pub fn mouse_left_click(&self, coords: Vec2) {
+    pub fn mouse_left_click(&self, coords: V2<u16>) {
         self.mouse_move(coords);
         self.mouse_left_down();
         self.mouse_left_up();
